@@ -4,7 +4,10 @@
  * @param b - The second number.
  * @returns The sum of a and b as a number
  */
-export const addTwoNumbers = (a: number, b?: number): string => {
+export const addTwoNumbers = (a: number, b?: number): number => {
+  if (typeof b === "undefined") {
+    b = 0;
+  }
   return a + b;
 };
 
@@ -13,31 +16,45 @@ export const addTwoNumbers = (a: number, b?: number): string => {
 //  * @param values - An array of numbers or strings.
 //  * @returns The sum of the numbers.
 //  */
-export const sumArray = (numbers: (number | string)[]): string => {
-  return numbers.reduce((acc, curr) => acc + curr, 0);
+export const sumArray = (numbers: (number | string)[]): number => {
+  let numberedArray: number[] = [];
+
+  numbers.forEach((item) => {
+    if (typeof item === "string") {
+      numberedArray.push(Number(item));
+    } else {
+      numberedArray.push(item);
+    }
+  });
+
+  return numberedArray.reduce((acc, curr) => acc + curr, 0);
 };
 
 // Create type "Person" with the following properties:
 // - name: string
 // - age: number
-export type Person = boolean;
+export type Person = {
+  name: string;
+  age: number;
+};
 
 // Create type "User" which extends "Person" and adds the following properties:
 // - type: 'user' (literal type)
-export type User = boolean;
+export type User = Person & { type: "user" };
 
 // Create type "Admin" which extends "Person" and adds the following properties:
 // - isSuperAdmin: boolean
-export type Admin = boolean;
+export type Admin = Person & { isAdmin: boolean };
 
 // Create a type "AllPeople" which is a union of "Person", "User", and "Admin"
+//?????
 export type AllPeople = Person | User | Admin;
 
 // Add function "isAdmin" that returns true if "u" is an admin
-export const isAdmin = (u: AllPeople) => undefined;
+export const isAdmin = (u: AllPeople) => ("isAdmin" in u ? true : false);
 
 // Add function "isUser" that returns true if "u" is a user
-export const isUser = (u: AllPeople) => undefined;
+export const isUser = (u: AllPeople) => ("type" in u ? true : false);
 
 /**
  * If a "Admin" calls userGreetingMessage, return "Hello, {name}. You are an admin."
@@ -47,5 +64,11 @@ export const isUser = (u: AllPeople) => undefined;
  * @returns A greeting message
  */
 export const userGreetingMessage = (u: AllPeople) => {
-  return "hello";
+  if (isAdmin(u)) {
+    return `Hello, ${u.name}. You are an admin.`;
+  } else if (isUser(u)) {
+    return `Hello, ${u.name}. You are a user.`;
+  } else {
+    return `Hello, ${u.name}. You do not have access.`;
+  }
 };
